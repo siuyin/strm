@@ -52,6 +52,11 @@ func (db *DB) Close() {
 	s.nc.Close()
 }
 
+// Delete deletes a key-value store.
+func (db *DB) Delete(bucketName string) error {
+	return s.js.DeleteKeyValue(bucketName)
+}
+
 func newEmbeddedNATSServer(host, name string) *server.Server {
 	svr, err := server.NewServer(&server.Options{
 		ServerName: name,
