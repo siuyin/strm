@@ -20,15 +20,17 @@ type Server struct {
 
 // DB is a pricing key-value database.
 type DB struct {
-	kv nats.KeyValue
+	// KV is a jetstream key value store
+	KV nats.KeyValue
 }
 
 var s *Server
 
 func svrInit() *Server {
 	host := dflt.EnvString("NATS_HOST", "localhost")
+	name := dflt.EnvString("SERVER_NAME", "pricing")
 	s = &Server{}
-	s.svr = newEmbeddedNATSServer(host)
+	s.svr = newEmbeddedNATSServer(host, name)
 	s.nc = newNATSConn(host)
 	s.js = newJetStream(s.nc)
 	return s
@@ -41,7 +43,7 @@ func DBInit(name string) *DB {
 	}
 
 	db := &DB{}
-	db.kv = newKeyValueStore(s.js, name)
+	db.KV = newKeyValueStore(s.js, name)
 	return db
 }
 
@@ -50,12 +52,12 @@ func (db *DB) Close() {
 	s.nc.Close()
 }
 
-func newEmbeddedNATSServer(host string) *server.Server {
+func newEmbeddedNATSServer(host, name string) *server.Server {
 	svr, err := server.NewServer(&server.Options{
-		ServerName: "Pricing",
+		ServerName: name,
 		Host:       host,
 		JetStream:  true,
-		StoreDir:   "/tmp/pricing",
+		StoreDir:   "/tmp/" + name,
 	})
 	if err != nil {
 		log.Fatal(err)

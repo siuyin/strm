@@ -11,13 +11,13 @@ func TestDBFunctions(t *testing.T) {
 	db := DBInit(bucketName)
 
 	t.Run("put and get", func(t *testing.T) {
-		if _, err := db.kv.PutString("a", "apple"); err != nil {
+		if _, err := db.KV.PutString("a", "apple"); err != nil {
 			t.Error(err)
 		}
-		if v, err := db.kv.Get("a"); string(v.Value()) != "apple" || err != nil {
+		if v, err := db.KV.Get("a"); string(v.Value()) != "apple" || err != nil {
 			t.Errorf("unable to get key 'a':  %v", err)
 		}
-		if err := db.kv.Delete("a"); err != nil {
+		if err := db.KV.Delete("a"); err != nil {
 			t.Error(err)
 		}
 	})
