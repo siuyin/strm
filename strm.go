@@ -35,12 +35,14 @@ func svrInit() *Server {
 	s.js = newJetStream(s.nc)
 	return s
 }
-
-// DBInit sets up a pricing database.
-func DBInit(name string) *DB {
+func init() {
 	if s == nil {
 		s = svrInit()
 	}
+}
+
+// DBInit sets up a pricing database.
+func DBInit(name string) *DB {
 
 	db := &DB{}
 	db.KV = newKeyValueStore(s.js, name)
